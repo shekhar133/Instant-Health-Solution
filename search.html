@@ -1,0 +1,43 @@
+{% extends "blog/base.html" %}
+{% block title %}Search{% endblock title %}
+{% block content %}
+
+{% if gujarat|length < 1 %}
+<div style="height:100vh;">
+  <h1>Search Result: </h1><br>
+  <h3>Your query :<b> {{query}}</b> did not match any documents</h3><br>
+  <h3>Suggestions: </h3><br>
+  
+  <ul>
+    <li><h3>Make sure there are no spelling mistakes in any word </h3></li>
+    <li><h3>Try different index words </h3></li>
+    <li><h3>Try more genral keywordss</h3></li>
+    <li><h3>Try different Keywords</h3></li>
+  </ul>
+</div>
+
+{% endif %}
+<section style="height:100%;">
+{% for hospital in gujarat %}
+
+<article class="content-section media border">
+  <img class="blog-inner-part-img rounded mx-auto d-block" src="{{ hospital.img.url }}"style:"border-radius:20px;">
+  <div class="media-body mx-4">
+    <div class="article-metadata">
+      <h2><a class="article-title" href="{% url 'gujarat_detail' hospital.id %}">{{ hospital.title }}</a></h2>
+    </div>
+    <p class="article-content">{{ hospital.content }}</p>
+   
+    <a class="btn btn-primary btn-lg" href="{{hospital.link}}">Read more</a>
+    <a class="btn btn-primary btn-lg" href="{% url 'gujarat_detail' hospital.id %}">Book Now</a>
+    <br>
+    <small>{{hospital.address}}</small>
+    <br><small>{{hospital.phone_number}}</small>
+  </div>
+
+</article>
+
+
+  {% endfor %}
+</section>
+{% endblock content %}

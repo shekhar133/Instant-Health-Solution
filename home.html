@@ -1,45 +1,176 @@
-{% extends "blog/base.html" %}
-{% block title %} Blog-Home{% endblock title %}
+{% extends "home/base.html" %}
+{% load static %}
+{% block title %} Home{% endblock title %}
 {% block content %}
-<section style ="height:100%;">
-  {% for post in posts %}
-  <article class="media content-section border">
-    <img class="rounded-circle article-img" src="{{ post.author.profile.img.url }}">
-    <div class="media-body">
-      <div class="article-metadata">
-        <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
-        <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
-      </div>
-      <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-      <p class="article-content">{{ post.content }}</p>
+
+<!-- home section starts  -->
+<section class="home" id="home">
+    <div class="chat-popup" id="myForm">
+    <div class="container-fluid">
+
+        <div class="row min-vh-80 align-items-center text-center text-md-left">
+
+            <div class="col-md-6 pr-md-5 pt-3" data-aos="zoom-in">
+                <img src="{% static 'images/homeDoctor.png' %}" width="90%" alt="">
+            </div>
+
+            <div class="col-md-6 pl-md-5 content" data-aos="fade-left">
+                <h1><span>stay</span> safe, <span>stay</span> healthy.</h1>
+                <h3>caring for you.</h3>
+                {% if user.is_authenticated %}
+                <a href="{% url 'blog-home'%}"><button class="button btn btn-lg btn-primary mr-4">Discussion</button></a>
+                {% else %}
+                <a href="{% url 'login'%}"><button class="button btn btn-lg btn-primary mr-4">Log in</button></a>
+                <a href="{% url 'register'%}"><button class="button btn btn-lg btn-primary ml-4">Sign up</button></a>
+                {% endif %}
+            </div>
+
+        </div>
+
     </div>
-  </article>
-  {% endfor %}
-
-
-  <div class="text-center page">
-    {% if is_paginated %}
-
-    {% if page_obj.has_previous %}
-      <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Prev</a>
-    {% endif %}
-    {% for num in page_obj.paginator.page_range %}
-      {% if page_obj.number == num %}
-      <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
-      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a class="btn btn-outline-info mb-4"
-        href="?page={{ num }}">{{ num }}</a>
-        {% endif %}
-    {% endfor %}
-
-      {% if page_obj.has_next %}
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-      {% endif %}
-
-      {% endif %}
-  </div>
 
 </section>
- 
+
+<!-- about section start  -->
+
+<section class="about" id="about">
+
+    <div class="container-fluid">
+        <h1 class="heading text-center pt-5">What we do</h1>
+        <div class="row min-vh-80 align-items-center">
+
+            <div class="col-md-6 content" data-aos="fade-right">
+
+                <div class="box">
+                    <h3> <i class="fas fa-ambulance"></i> Provide health-related services </h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa, suscipit.</p>
+                </div>
+
+                <div class="box">
+                    <h3> <i class="fas fa-procedures"></i>Help you Find right Doctor</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa, suscipit.</p>
+                </div>
+
+                <div class="box">
+                    <h3> <i class="fas fa-stethoscope"></i>Free services</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa, suscipit.</p>
+                </div>
+
+            </div>
+
+            <div class="col-md-6 d-none d-md-block" data-aos="fade-left">
+                <img src="{% static 'images/doctor.png' %}" width="80%" alt="">
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Review section  -->
+<section class="review" id="review">
+
+    <div class="container-fluid">
+
+        <h1 class="heading text-center pt-5">people's review</span></h1>
+
+        <div class="box-container">
+
+            <div class="box" data-aos="fade-right">
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consectetur accusantium error numquam
+                    dolore atque. Atque totam ad sint ducimus! Maxime!</p>
+                <h3>someone's name</h3>
+                <span>jan 5, 2021</span>
+                <img src="{% static 'images/person1.jpg' %}" alt="">
+            </div>
+
+            <div class="box" data-aos="fade-up">
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consectetur accusantium error numquam
+                    dolore atque. Atque totam ad sint ducimus! Maxime!</p>
+                <h3>someone's name</h3>
+                <span>jan 7, 2021</span>
+                <img src="{% static 'images/person2.jpg' %}" alt="">
+            </div>
+
+            <div class="box" data-aos="fade-left">
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consectetur accusantium error numquam
+                    dolore atque. Atque totam ad sint ducimus! Maxime!</p>
+                <h3>someone's name</h3>
+                <span>jan 10, 2021</span>
+                <img src="{% static 'images/person3.jpg' %}" alt="">
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- post section  -->
+<section class="post" id="post">
+
+    <div class="container-fluid min-vh-100">
+
+        <h1 class="heading text-center pt-5">Our post</span></h1>
+
+        <div class="box-container">
+
+            <div class="box" data-aos="fade-right">
+                <img src="{% static 'images/post1.png' %}" alt="">
+                <div class="content">
+                    <span>August 22, 2022</span>
+                    <a href="#">
+                        <h3>post title goes here</h3>
+                    </a>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ex porro libero at veniam
+                        molestias facere quo necessitatibus ipsum ad?</p>
+                    <a href="#"><button class="button">learn more</button></a>
+                </div>
+            </div>
+
+            <div class="box" data-aos="fade-up">
+                <img src="{% static 'images/post2.png' %}" alt="">
+                <div class="content">
+                    <span>August 22, 2022</span>
+                    <a href="#">
+                        <h3>post title goes here</h3>
+                    </a>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ex porro libero at veniam
+                        molestias facere quo necessitatibus ipsum ad?</p>
+                    <a href="#"><button class="button">learn more</button></a>
+                </div>
+            </div>
+
+            <div class="box" data-aos="fade-left">
+                <img src="{% static 'images/post3.png' %}" alt="">
+                <div class="content">
+                    <span>August 22, 2022</span>
+                    <a href="#">
+                        <h3>post title goes here</h3>
+                    </a>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae ex porro libero at veniam
+                        molestias facere quo necessitatibus ipsum ad?</p>
+                    <a href="#"><button class="button">learn more</button></a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<div class="chat-popup" id="myForm">
+    <form action="/action_page.php" class="form-container">
+      <h1>Chat</h1>
+  
+      <label for="msg"><b>Message</b></label>
+      <textarea placeholder="Type message.." name="msg" required></textarea>
+  
+      <button type="submit" class="btn">Send</button>
+      <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+    </form>
+  </div>
+
 {% endblock content %}
