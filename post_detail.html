@@ -1,0 +1,39 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block title %}{% endblock title %}
+{% block content %}
+<section style="height:80vh;">
+
+
+  <article class="media content-section border" style:"height:auto">
+    <img class="rounded-circle article-img" src="{{ object.author.profile.img.url }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+        <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+        {% if object.author == user %}
+          <div class="button">
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ object.title }}</h2>
+      <p class="article-content">{{ object.content }}</p>
+    </div>
+  </article>
+
+<!--comments-->
+<div class="container">
+  <h2>Comment</h2>
+  <div class="row my-3">
+    <div class="col-md-2 bg-success">
+      
+    </div>
+    <div class="col-md-6 bg-primary">
+      
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <link rel="stylesheet" href=" {% static 'main.css' %}">
+
+  <title>{% block title %}{% endblock title %}
+  </title>
+
+</head>
+<style>
+  {% block style %}{% endblock style %}
+</style>
+<body>
+  <header class="bg-dark 0">
+
+    <div class="container">
+
+      <a href="{% url 'home' %}" class="logo"><span>H</span>ealth<span>S</span>olutions.</a>
+
+      <nav class="nav">
+        <ul>
+
+          <li><a href=" {% url 'blog-home' %}">Blog</a></li>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'profile' user%}">Profile</a></li>
+          <li><a href="{% url 'gujaratNgo' %}">NGO</a></li>
+          <li><a href="{% url 'gujarat-hospitals' %}">Hospital</a></li>
+          <li><a href="{% url 'logout' %}">Log out</a></li>
+
+          {% else %}
+          <li><a href="{% url 'gujaratNgo' %}">NGO</a></li>
+          <li><a href="{% url 'gujarat-hospitals' %}">Hospital</a></li>
+          <li><a href="{% url 'register' %}">Register</a></li>
+          <li><a href="{% url 'login' %}">Login</a></li>
+
+          {% endif %}
+
+
+        </ul>
+        <form method="GET" action="{% url 'search' %}" class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query"
+            id="query">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </nav>
+
+      <div class="fas fa-bars"></div>
+
+    </div>
+  </header>
+  <section role="main" class="main container-fluid pt-5 justify-content-center" >
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="width:100%;font-size:2rem;">
+      {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    <div class="row">
+      <div class="col-md-9 col-sm-12">
+        
+        {% block content %}
+
+        {% endblock content%}
+      </div>
+
+    </div>  
+  </section>
+
+  <section class="footer pt-5 ">
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col-md-12 text-center" data-aos="fade-right">
+          <h3><a href="#" class="logo"><span>H</span>ealth<span>S</span>solution.</a>
+            <h3>
+              <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur nemo porro quasi minima
+                consequuntur dolorum, quas amet in autem id?</p>
+        </div>
+
+      </div>
+
+    </div>
+    <h2 class="credit text-center mx-auto"><span>Copyright</span> | all rights reserved.</h2>
+
+  </section>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
+  <!-- jquery cdn link  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <!-- magnific popup js link  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+
+  <!-- aos js file cdn link  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+  <!-- custom js link  -->
+
+
+  <script>{% block script %} {% endblock script %}</script>
+  <script>
+
+    AOS.init({
+      duration: 1000,
+      delay: 400
+    });
+  
+  </body >
+</html >
