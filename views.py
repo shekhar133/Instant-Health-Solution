@@ -1,92 +1,136 @@
-from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
+from django.shortcuts import render,HttpResponse, HttpResponseRedirect
+from .models import Gujarat_hospital,Appointment,Gujarat_Ngo
+from django.contrib.auth.decorators import login_required
 from django.views.generic import (
     ListView,
     DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView
 )
-from requests import post
-from .models import Post,Comment
+from django.core.mail import EmailMessage
+from django.contrib import messages
+from django.views.generic.base import TemplateView
+import datetime
+from django.template import Context
+from django.template.loader import render_to_string,get_template
 
 
+# Create your views here.
 def home(request):
+    return render(request,'home/home.html')
+
+def gujarat(request):
     context = {
-        'posts': Post.objects.all()
+        'gujarat': Gujarat_hospital.objects.all()
     }
-    return render(request, 'blog/home.html', context)
+    return render(request, 'home/gujarat.html', context)
+
+class GujaratListView(ListView):
+    model = Gujarat_hospital
+    template_name = 'home/gujarat.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'gujarat'
+    paginate_by = 8
+
+class GujaratDetailView(DetailView):
+    model = Gujarat_hospital
+    template_name = 'home/gujarat_detail.html'
+
+def gujaratNgo(request):
+    context = {
+        'gujarat_ngo': Gujarat_Ngo.objects.all()
+    }
+    return render(request, 'home/gujaratNgo.html', context)
+
+class GujaratNgoListView(ListView):
+    model = Gujarat_Ngo
+    template_name = 'home/gujaratNgo.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'gujarat_ngo'
+    paginate_by = 8
+
+class GujaratNgoDetailView(DetailView):
+    model = Gujarat_Ngo
+    template_name = 'home/gujarat_ngo.html'
 
 
-class PostListView(ListView):
-    model = Post
-    template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts'
+
+def search(request):
+    query =request.GET['query']
     
-    ordering = ['-date_posted']
-    paginate_by = 6
+    title_hospitals = Gujarat_hospital.objects.filter(title__icontains = query)
+    content_hospitals = Gujarat_hospital.objects.filter(content__icontains = query)
+    city_hospitals = Gujarat_hospital.objects.filter(city__icontains = query)
+    merge_hospital = title_hospitals.union(content_hospitals)
+
+    hospitals = merge_hospital.union(city_hospitals)
+
+    if len(hospitals)==0:
+        messages.warning(request,f'No search results found.Please refine your query')
+
+    context = {'gujarat':hospitals,'query':query}
+    return render(request,'home/search.html',context)
 
 
-class UserPostListView(ListView):
-    model = Post
-    template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts'
-    paginate_by = 5
+class AppointmentTemplateView(TemplateView):
+    template_name = 'home/appointment.html'
 
-    def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=user).order_by('-date_posted')
+    def post(self, request):
+        fname = request.POST.get("fname")
+        lname = request.POST.get("fname")
+        email = request.POST.get("email")
+        mobile = request.POST.get("mobile")
+        message = request.POST.get("request")
 
+        appointment = Appointment.objects.create(
+            first_name=fname,
+            last_name=lname,
+            email=email,
+            phone=mobile,
+            request=message,
+        )
 
-class PostDetailView(DetailView):
-    model = Post
+        appointment.save()
 
-
-
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    fields = ['title', 'content']
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Post
-    fields = ['title', 'content']
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
+        messages.add_message(request, messages.SUCCESS, f"Thanks {fname} for making an appointment, we will email you ASAP!")
+        return HttpResponseRedirect(request.path)
 
 
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Post
-    success_url = '/'
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
-
-def postComment(request,slug):
-    if request.method == "post":
-        postId = request.POST.get('postId')
-        user = request.user
-        content =request.POST.get('content')
-        post = Post.objects.get(id )
-
-    return redirect("/")
+class ManageAppointmentTemplateView(ListView):
+    template_name = "home/manage-appointments.html"
+    model = Appointment
+    context_object_name = "appointments"
+    login_required = True
+    paginate_by = 3
 
 
-def about(request):
-    return render(request, 'blog/about.html', {'title': 'About'})
+    def post(self, request):
+        date = request.POST.get("date")
+        appointment_id = request.POST.get("appointment-id")
+        appointment = Appointment.objects.get(id=appointment_id)
+        appointment.accepted = True
+        appointment.accepted_date = datetime.datetime.now()
+        appointment.save()
+
+        data = {
+            "fname":appointment.first_name,
+            "date":date,
+        }
+
+        message = get_template('home/email.html').render(data)
+        email = EmailMessage(
+            "About your appointment",
+            message,
+            'kenchowangdi@gmail.com'
+            [appointment.email],
+        )
+        email.content_subtype = "html"
+        email.send()
+
+        messages.add_message(request, messages.SUCCESS, f"You accepted the appointment of {appointment.first_name}")
+        return HttpResponseRedirect(request.path)
+
+
+    def get_context_data(self,*args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        appointments = Appointment.objects.all()
+        context.update({   
+            "title":"Manage Appointments"
+        })
+        return context

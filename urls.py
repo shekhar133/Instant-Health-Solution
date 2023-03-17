@@ -1,23 +1,40 @@
+"""HealthSystem URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/4.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
 from django.urls import path
+from home import views
 from .views import (
-    PostListView,
-    PostDetailView,
-    PostCreateView,
-    PostUpdateView,
-    PostDeleteView,
-    UserPostListView
+    GujaratListView,
+    GujaratDetailView,
+    GujaratNgoListView,
+    GujaratNgoDetailView
+    
 )
-from . import views
+from home.views import AppointmentTemplateView,ManageAppointmentTemplateView
 
 urlpatterns = [
-    path('', PostListView.as_view(), name='blog-home'),
-    path('user/<str:username>', UserPostListView.as_view(), name='user-posts'),
-    path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
-    path('post/new/', PostCreateView.as_view(), name='post-create'),
-    path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
-    path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
-    path('about/', views.about, name='blog-about'),
+    path('', GujaratListView.as_view(), name='gujarat-hospitals'),
+    path('gujarat/<int:pk>/', GujaratDetailView.as_view(), name='gujarat_detail'),
 
-    #API to post comment
-    path('postComment/', views.postComment, name='blog-postComment'),
+    path('gujaratNgo', GujaratNgoListView.as_view(), name='gujaratNgo'),
+    path('gujaratNgo/<int:pk>/', GujaratNgoDetailView.as_view(), name='gujaratNgo_detail'),
+
+    path('health/', views.home, name='home'),
+    path('search/', views.search, name='search'),
+
+    path('appointment/', AppointmentTemplateView.as_view(), name='appointment'),
+    path('manage-appointment/', ManageAppointmentTemplateView.as_view(), name='manage'),
 ]
